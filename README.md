@@ -4,6 +4,10 @@ Claude Code 의 토큰 사용량과 비용을 **내 PC 에서만** 수집해 Gra
 Claude Code 가 내보내는 OpenTelemetry 이벤트를 로컬 Loki 가 받아 저장하고, Grafana 가 세션·턴·스킬·MCP·서브에이전트·도구 단위로 집계한다.
 데이터는 PC 밖으로 나가지 않는다(Loki·Grafana 모두 `127.0.0.1` 에만 열린다).
 
+![Claude Code 토큰 사용량 대시보드](docs/dashboard.png)
+
+위에서부터 기간 합계, 토큰·비용 추이, 세션별·턴별 사용량, 스킬·MCP·서브에이전트·도구별 사용량, 주간 대비 증감, API 요청 원본 이벤트 순이다.
+
 ## 준비물
 
 - Docker (Docker Desktop 또는 OrbStack) — 실행 중이어야 한다
