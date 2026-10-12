@@ -1,0 +1,38 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+  log_level: warn
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /loki
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+
+schema_config:
+  configs:
+    - from: 2024-01-01
+      store: tsdb
+      object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+
+limits_config:
+  allow_structured_metadata: true
+  reject_old_samples: false
+  # 감사 용도: 긴 기간 조회와 세션·턴 단위 집계를 허용한다. 보존 기간 제한은 두지 않는다(삭제 없음).
+  max_query_length: 0
+  max_query_series: 100000
+  max_entries_limit_per_query: 50000
+
+analytics:
+  reporting_enabled: false

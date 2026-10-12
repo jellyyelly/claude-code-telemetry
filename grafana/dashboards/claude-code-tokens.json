@@ -1,0 +1,2626 @@
+{
+  "uid": "claude-code-tokens",
+  "title": "Claude Code 토큰 사용량",
+  "tags": [
+    "claude-code"
+  ],
+  "timezone": "Asia/Seoul",
+  "schemaVersion": 39,
+  "editable": true,
+  "refresh": "10s",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "templating": {
+    "list": [
+      {
+        "name": "session",
+        "label": "세션 ID (비우면 전체)",
+        "type": "textbox",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ]
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "입력 토큰",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep input_tokens | unwrap input_tokens [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "출력 토큰",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 3,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep output_tokens | unwrap output_tokens [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "캐시 읽기 토큰",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep cache_read_tokens | unwrap cache_read_tokens [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "캐시 쓰기 토큰",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 9,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep cache_creation_tokens | unwrap cache_creation_tokens [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "비용 (USD)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep cost_usd | unwrap cost_usd [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 4,
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "API 요청",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 15,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep event_name [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "턴",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep prompt_id [$__range])))",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 8,
+      "type": "stat",
+      "title": "세션",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 21,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id [$__range])))",
+          "queryType": "instant"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "noValue": "0",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "text"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "none",
+        "graphMode": "none"
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "토큰 사용량 추이 (종류별)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 14,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep input_tokens | unwrap input_tokens [$__interval]))",
+          "queryType": "range",
+          "legendFormat": "입력"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep output_tokens | unwrap output_tokens [$__interval]))",
+          "queryType": "range",
+          "legendFormat": "출력"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep cache_read_tokens | unwrap cache_read_tokens [$__interval]))",
+          "queryType": "range",
+          "legendFormat": "캐시 읽기"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep cache_creation_tokens | unwrap cache_creation_tokens [$__interval]))",
+          "queryType": "range",
+          "legendFormat": "캐시 쓰기"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "lineWidth": 0,
+            "stacking": {
+              "mode": "normal"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "sum"
+          ]
+        }
+      }
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "비용 추이 (모델별)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 14,
+        "y": 4,
+        "w": 10,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (model) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep model, cost_usd | unwrap cost_usd [$__interval]))",
+          "queryType": "range",
+          "legendFormat": "{{model}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "currencyUSD",
+          "decimals": 4,
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 70,
+            "lineWidth": 0,
+            "stacking": {
+              "mode": "normal"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        },
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "sum"
+          ]
+        }
+      }
+    },
+    {
+      "id": 11,
+      "type": "table",
+      "title": "주간 대비 증감: 비용 (최근 7일 vs 직전 7일)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 58,
+        "w": 9,
+        "h": 10
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])), \"metric\", \"1. 비용\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d])))), \"metric\", \"2. 턴당 평균 비용\", \"\", \"\")",
+          "queryType": "instant"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) or vector(0)), \"metric\", \"1. 비용\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d)))) or vector(0)), \"metric\", \"2. 턴당 평균 비용\", \"\", \"\")",
+          "queryType": "instant"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) or vector(0))), \"metric\", \"1. 비용\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d])))) - ((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d)))) or vector(0))), \"metric\", \"2. 턴당 평균 비용\", \"\", \"\")",
+          "queryType": "instant"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d))), \"metric\", \"1. 비용\", \"\", \"\") or label_replace((((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d])))) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d))))) / (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d))))), \"metric\", \"2. 턴당 평균 비용\", \"\", \"\")",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "metric": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4
+            },
+            "renameByName": {
+              "Value #A": "최근 7일",
+              "Value #B": "직전 7일",
+              "Value #C": "증감",
+              "Value #D": "증감률"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "비용 (USD)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(시작|마지막 활동)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(metric)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|prompt_id)$"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "\\(ms\\)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "metric"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "항목"
+              },
+              {
+                "id": "custom.width",
+                "value": 230
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(최근 7일|직전 7일|증감)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "증감률"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "text",
+                      "value": -0.05
+                    },
+                    {
+                      "color": "red",
+                      "value": 0.05
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "metric",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "description": "대시보드 시간 범위의 끝 시각을 기준으로 최근 7일과 그 직전 7일을 비교한다(시간 범위 길이·세션 필터와 무관, 전체 세션 대상). 직전 7일에 데이터가 없으면 증감률 열은 나오지 않는다."
+    },
+    {
+      "id": 12,
+      "type": "table",
+      "title": "주간 대비 증감: 사용량 (최근 7일 vs 직전 7일)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 9,
+        "y": 58,
+        "w": 15,
+        "h": 10
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "label_replace(count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d]))), \"metric\", \"1. 세션\", \"\", \"\") or label_replace(count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d]))), \"metric\", \"2. 턴\", \"\", \"\") or label_replace(sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d])), \"metric\", \"3. API 요청\", \"\", \"\") or label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d])), \"metric\", \"4. 입력 토큰\", \"\", \"\") or label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d])), \"metric\", \"5. 출력 토큰\", \"\", \"\") or label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d])), \"metric\", \"6. 캐시 읽기 토큰\", \"\", \"\") or label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d])), \"metric\", \"7. 캐시 쓰기 토큰\", \"\", \"\")",
+          "queryType": "instant"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "label_replace((count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d] offset 7d))) or vector(0)), \"metric\", \"1. 세션\", \"\", \"\") or label_replace((count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d))) or vector(0)), \"metric\", \"2. 턴\", \"\", \"\") or label_replace((sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d] offset 7d)) or vector(0)), \"metric\", \"3. API 요청\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d] offset 7d)) or vector(0)), \"metric\", \"4. 입력 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d] offset 7d)) or vector(0)), \"metric\", \"5. 출력 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d] offset 7d)) or vector(0)), \"metric\", \"6. 캐시 읽기 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d] offset 7d)) or vector(0)), \"metric\", \"7. 캐시 쓰기 토큰\", \"\", \"\")",
+          "queryType": "instant"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "label_replace((count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d]))) - (count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d] offset 7d))) or vector(0))), \"metric\", \"1. 세션\", \"\", \"\") or label_replace((count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d]))) - (count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d))) or vector(0))), \"metric\", \"2. 턴\", \"\", \"\") or label_replace((sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d])) - (sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d] offset 7d)) or vector(0))), \"metric\", \"3. API 요청\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d] offset 7d)) or vector(0))), \"metric\", \"4. 입력 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d] offset 7d)) or vector(0))), \"metric\", \"5. 출력 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d] offset 7d)) or vector(0))), \"metric\", \"6. 캐시 읽기 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d] offset 7d)) or vector(0))), \"metric\", \"7. 캐시 쓰기 토큰\", \"\", \"\")",
+          "queryType": "instant"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "label_replace(((count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d]))) - count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d] offset 7d)))) / count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d] offset 7d)))), \"metric\", \"1. 세션\", \"\", \"\") or label_replace(((count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d]))) - count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d)))) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d)))), \"metric\", \"2. 턴\", \"\", \"\") or label_replace(((sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d])) - sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d] offset 7d))) / sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d] offset 7d))), \"metric\", \"3. API 요청\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d] offset 7d))), \"metric\", \"4. 입력 토큰\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d] offset 7d))), \"metric\", \"5. 출력 토큰\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d] offset 7d))), \"metric\", \"6. 캐시 읽기 토큰\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d] offset 7d))), \"metric\", \"7. 캐시 쓰기 토큰\", \"\", \"\")",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "metric": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4
+            },
+            "renameByName": {
+              "Value #A": "최근 7일",
+              "Value #B": "직전 7일",
+              "Value #C": "증감",
+              "Value #D": "증감률"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "비용 (USD)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(시작|마지막 활동)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(metric)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|prompt_id)$"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "\\(ms\\)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "metric"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "항목"
+              },
+              {
+                "id": "custom.width",
+                "value": 230
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(최근 7일|직전 7일|증감)$"
+            },
+            "properties": []
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "증감률"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "text",
+                      "value": -0.05
+                    },
+                    {
+                      "color": "red",
+                      "value": 0.05
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "metric",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "description": "대시보드 시간 범위의 끝 시각을 기준으로 최근 7일과 그 직전 7일을 비교한다(시간 범위 길이·세션 필터와 무관, 전체 세션 대상). 직전 7일에 데이터가 없으면 증감률 열은 나오지 않는다."
+    },
+    {
+      "id": 13,
+      "type": "table",
+      "title": "세션별 사용량",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 12,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "min by (session_id) (min_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | label_format ts=\"{{ __timestamp__ | unixEpoch }}\" | keep session_id, ts | unwrap ts [$__range])) * 1000",
+          "queryType": "instant"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "max by (session_id) (max_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | label_format ts=\"{{ __timestamp__ | unixEpoch }}\" | keep session_id, ts | unwrap ts [$__range])) * 1000",
+          "queryType": "instant"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "count by (session_id) (sum by (session_id, prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, prompt_id [$__range])))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "first_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | label_format ctx=`{{ add (int .input_tokens) (int .cache_read_tokens) (int .cache_creation_tokens) }}` | keep session_id, ctx | unwrap ctx [$__range]) by (session_id)",
+          "queryType": "instant"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "max_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | label_format ctx=`{{ add (int .input_tokens) (int .cache_read_tokens) (int .cache_creation_tokens) }}` | keep session_id, ctx | unwrap ctx [$__range]) by (session_id)",
+          "queryType": "instant"
+        },
+        {
+          "refId": "G",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, input_tokens | unwrap input_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "H",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, output_tokens | unwrap output_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "I",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, cache_read_tokens | unwrap cache_read_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "J",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, cache_creation_tokens | unwrap cache_creation_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "K",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, cost_usd | unwrap cost_usd [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "L",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "max by (session_id, session_name, project) (max_over_time({service_name=\"claude-code-session\"} | session_id=~\"${session}.*\" | label_format ts=`{{ __timestamp__ | unixEpoch }}` | keep session_id, session_name, project, ts | unwrap ts [$__range])) == on (session_id) group_left() max by (session_id) (max by (session_id, session_name, project) (max_over_time({service_name=\"claude-code-session\"} | session_id=~\"${session}.*\" | label_format ts=`{{ __timestamp__ | unixEpoch }}` | keep session_id, session_name, project, ts | unwrap ts [$__range])))",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Value #L": true
+            },
+            "indexByName": {
+              "session_id": 0,
+              "session_name": 1,
+              "project": 2,
+              "Value #A": 3,
+              "Value #B": 4,
+              "Value #C": 5,
+              "Value #D": 6,
+              "Value #E": 7,
+              "Value #F": 8,
+              "Value #G": 9,
+              "Value #H": 10,
+              "Value #I": 11,
+              "Value #J": 12,
+              "Value #K": 13,
+              "Value #L": 14
+            },
+            "renameByName": {
+              "Value #A": "시작",
+              "Value #B": "마지막 활동",
+              "Value #C": "턴",
+              "Value #D": "API 요청",
+              "Value #E": "초기 컨텍스트",
+              "Value #F": "최대 컨텍스트",
+              "Value #G": "입력",
+              "Value #H": "출력",
+              "Value #I": "캐시 읽기",
+              "Value #J": "캐시 쓰기",
+              "Value #K": "비용 (USD)",
+              "Value #L": "이름 기록 시각"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "비용 (USD)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(시작|마지막 활동)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|session_name|project)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|prompt_id)$"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "\\(ms\\)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "session_id"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "이 세션만 보기",
+                    "url": "/d/claude-code-tokens?var-session=${__value.raw}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "마지막 활동",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "description": "초기 컨텍스트 = 세션 첫 API 요청의 프롬프트 크기(입력+캐시 읽기+캐시 쓰기). 시스템 프롬프트·도구 정의·메모리 파일·스킬 목록을 합친 고정 부담의 근사값이다. 최대 컨텍스트 = 세션 중 가장 컸던 요청의 프롬프트 크기. session_name·project 는 Stop 훅(session-name-hook.sh)이 기록한 값이라 첫 턴이 끝나기 전에는 비어 있다. session_id 를 누르면 아래 표들이 그 세션으로 좁혀진다."
+    },
+    {
+      "id": 14,
+      "type": "table",
+      "title": "턴별 사용량 (prompt.id 기준)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 24,
+        "h": 11
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "min by (session_id, prompt_id, model) (min_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | label_format ts=\"{{ __timestamp__ | unixEpoch }}\" | keep session_id, prompt_id, model, ts | unwrap ts [$__range])) * 1000",
+          "queryType": "instant"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id, prompt_id, model) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, prompt_id, model [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id, prompt_id, model) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, prompt_id, model, input_tokens | unwrap input_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id, prompt_id, model) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, prompt_id, model, output_tokens | unwrap output_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id, prompt_id, model) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, prompt_id, model, cache_read_tokens | unwrap cache_read_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id, prompt_id, model) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, prompt_id, model, cache_creation_tokens | unwrap cache_creation_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "G",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (session_id, prompt_id, model) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | keep session_id, prompt_id, model, cost_usd | unwrap cost_usd [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "field": "Value #A",
+                "desc": false
+              }
+            ]
+          }
+        },
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "session_id"
+            ],
+            "keepFields": true
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "index",
+            "alias": "_idx",
+            "index": {
+              "asPercentile": false
+            }
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "mode": "binary",
+            "alias": "턴 번호",
+            "binary": {
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "_idx"
+                }
+              },
+              "operator": "+",
+              "right": {
+                "fixed": "1"
+              }
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "_idx": true
+            },
+            "indexByName": {
+              "session_id": 0,
+              "턴 번호": 1,
+              "prompt_id": 2,
+              "model": 3,
+              "Value #A": 4,
+              "Value #B": 5,
+              "Value #C": 6,
+              "Value #D": 7,
+              "Value #E": 8,
+              "Value #F": 9,
+              "Value #G": 10
+            },
+            "renameByName": {
+              "Value #A": "시작",
+              "Value #B": "API 요청",
+              "Value #C": "입력",
+              "Value #D": "출력",
+              "Value #E": "캐시 읽기",
+              "Value #F": "캐시 쓰기",
+              "Value #G": "비용 (USD)"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "비용 (USD)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(시작|마지막 활동)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|prompt_id|model)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|prompt_id)$"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "\\(ms\\)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "턴 번호"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              },
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "턴 번호",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "description": "턴 번호 = 선택한 기간 안에서 그 세션의 몇 번째 턴인지(시작 시각 순). 기간이 세션 시작보다 늦게 잡히면 번호가 1부터 다시 매겨진다."
+    },
+    {
+      "id": 15,
+      "type": "table",
+      "title": "스킬별 귀속 사용량",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 10,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (skill_name) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | skill_name!=\"\" | keep skill_name [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (skill_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | skill_name!=\"\" | keep skill_name, input_tokens | unwrap input_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (skill_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | skill_name!=\"\" | keep skill_name, output_tokens | unwrap output_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (skill_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | skill_name!=\"\" | keep skill_name, cache_read_tokens | unwrap cache_read_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (skill_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | skill_name!=\"\" | keep skill_name, cache_creation_tokens | unwrap cache_creation_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (skill_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | skill_name!=\"\" | keep skill_name, cost_usd | unwrap cost_usd [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "skill_name": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4,
+              "Value #E": 5,
+              "Value #F": 6
+            },
+            "renameByName": {
+              "Value #A": "API 요청",
+              "Value #B": "입력",
+              "Value #C": "출력",
+              "Value #D": "캐시 읽기",
+              "Value #E": "캐시 쓰기",
+              "Value #F": "비용 (USD)"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "비용 (USD)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(시작|마지막 활동)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(skill_name)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|prompt_id)$"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "\\(ms\\)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "비용 (USD)",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "description": "api_request 이벤트의 skill_name 기준. 스킬이 활성화된 뒤의 요청에 계속 붙으므로 MCP 표와 겹칠 수 있다(합산 금지)."
+    },
+    {
+      "id": 16,
+      "type": "table",
+      "title": "MCP 서버·도구별 귀속 사용량",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 10,
+        "y": 32,
+        "w": 14,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (mcp_server_name, mcp_tool_name) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | mcp_server_name!=\"\" | keep mcp_server_name, mcp_tool_name [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (mcp_server_name, mcp_tool_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | mcp_server_name!=\"\" | keep mcp_server_name, mcp_tool_name, input_tokens | unwrap input_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (mcp_server_name, mcp_tool_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | mcp_server_name!=\"\" | keep mcp_server_name, mcp_tool_name, output_tokens | unwrap output_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (mcp_server_name, mcp_tool_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | mcp_server_name!=\"\" | keep mcp_server_name, mcp_tool_name, cache_read_tokens | unwrap cache_read_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (mcp_server_name, mcp_tool_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | mcp_server_name!=\"\" | keep mcp_server_name, mcp_tool_name, cache_creation_tokens | unwrap cache_creation_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (mcp_server_name, mcp_tool_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | mcp_server_name!=\"\" | keep mcp_server_name, mcp_tool_name, cost_usd | unwrap cost_usd [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "mcp_server_name": 0,
+              "mcp_tool_name": 1,
+              "Value #A": 2,
+              "Value #B": 3,
+              "Value #C": 4,
+              "Value #D": 5,
+              "Value #E": 6,
+              "Value #F": 7
+            },
+            "renameByName": {
+              "Value #A": "API 요청",
+              "Value #B": "입력",
+              "Value #C": "출력",
+              "Value #D": "캐시 읽기",
+              "Value #E": "캐시 쓰기",
+              "Value #F": "비용 (USD)"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "비용 (USD)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(시작|마지막 활동)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(mcp_server_name|mcp_tool_name)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|prompt_id)$"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "\\(ms\\)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "비용 (USD)",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "description": "api_request 이벤트의 mcp_server_name / mcp_tool_name 기준. MCP 도구 결과를 처리한 요청의 토큰이다."
+    },
+    {
+      "id": 17,
+      "type": "table",
+      "title": "서브에이전트별 사용량",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 41,
+        "w": 24,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (agent_name) (count_over_time({service_name=\"claude-code\"} | event_name=\"subagent_completed\" | session_id=~\"${session}.*\" | label_format agent_name=`{{ .agent_type }}` | keep agent_name [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (agent_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"subagent_completed\" | session_id=~\"${session}.*\" | label_format agent_name=`{{ .agent_type }}` | keep agent_name, total_tool_uses | unwrap total_tool_uses [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (agent_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"subagent_completed\" | session_id=~\"${session}.*\" | label_format agent_name=`{{ .agent_type }}` | keep agent_name, duration_ms | unwrap duration_ms [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (agent_name) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | agent_name!=\"\" | keep agent_name [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (agent_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | agent_name!=\"\" | keep agent_name, input_tokens | unwrap input_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "F",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (agent_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | agent_name!=\"\" | keep agent_name, output_tokens | unwrap output_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "G",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (agent_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | agent_name!=\"\" | keep agent_name, cache_read_tokens | unwrap cache_read_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "H",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (agent_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | agent_name!=\"\" | keep agent_name, cache_creation_tokens | unwrap cache_creation_tokens [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "I",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (agent_name) (sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | agent_name!=\"\" | keep agent_name, cost_usd | unwrap cost_usd [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "agent_name": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4,
+              "Value #E": 5,
+              "Value #F": 6,
+              "Value #G": 7,
+              "Value #H": 8,
+              "Value #I": 9
+            },
+            "renameByName": {
+              "Value #A": "실행",
+              "Value #B": "도구 호출",
+              "Value #C": "소요 (ms)",
+              "Value #D": "API 요청",
+              "Value #E": "입력",
+              "Value #F": "출력",
+              "Value #G": "캐시 읽기",
+              "Value #H": "캐시 쓰기",
+              "Value #I": "비용 (USD)"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "비용 (USD)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(시작|마지막 활동)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(agent_name)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|prompt_id)$"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "\\(ms\\)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "비용 (USD)",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "description": "api_request 이벤트의 agent_name 기준(서브에이전트가 보낸 요청만). 서브에이전트 요청은 부모 세션의 session_id·prompt_id 를 그대로 쓰므로 위 세션별·턴별 합계에 이미 포함되어 있다. 실행·도구 호출·소요는 subagent_completed 이벤트 기준이다."
+    },
+    {
+      "id": 18,
+      "type": "table",
+      "title": "도구별 호출 수와 입출력 크기",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 49,
+        "w": 24,
+        "h": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (tool) (count_over_time({service_name=\"claude-code\"} | event_name=\"tool_result\" | session_id=~\"${session}.*\" | label_format tool=`{{ if eq .tool_name \"mcp_tool\" }}mcp:{{ regexReplaceAll \".*mcp_server_name\\\":\\\"([^\\\"]+)\\\".*mcp_tool_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}/${2}\" }}{{ else if eq .tool_name \"Skill\" }}Skill:{{ regexReplaceAll \".*skill_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}\" }}{{ else }}{{ .tool_name }}{{ end }}` | keep tool [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (tool) (count_over_time({service_name=\"claude-code\"} | event_name=\"tool_result\" | session_id=~\"${session}.*\" | label_format tool=`{{ if eq .tool_name \"mcp_tool\" }}mcp:{{ regexReplaceAll \".*mcp_server_name\\\":\\\"([^\\\"]+)\\\".*mcp_tool_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}/${2}\" }}{{ else if eq .tool_name \"Skill\" }}Skill:{{ regexReplaceAll \".*skill_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}\" }}{{ else }}{{ .tool_name }}{{ end }}` | success=\"false\" | keep tool [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (tool) (sum_over_time({service_name=\"claude-code\"} | event_name=\"tool_result\" | session_id=~\"${session}.*\" | label_format tool=`{{ if eq .tool_name \"mcp_tool\" }}mcp:{{ regexReplaceAll \".*mcp_server_name\\\":\\\"([^\\\"]+)\\\".*mcp_tool_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}/${2}\" }}{{ else if eq .tool_name \"Skill\" }}Skill:{{ regexReplaceAll \".*skill_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}\" }}{{ else }}{{ .tool_name }}{{ end }}` | keep tool, tool_input_size_bytes | unwrap tool_input_size_bytes [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "D",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (tool) (sum_over_time({service_name=\"claude-code\"} | event_name=\"tool_result\" | session_id=~\"${session}.*\" | label_format tool=`{{ if eq .tool_name \"mcp_tool\" }}mcp:{{ regexReplaceAll \".*mcp_server_name\\\":\\\"([^\\\"]+)\\\".*mcp_tool_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}/${2}\" }}{{ else if eq .tool_name \"Skill\" }}Skill:{{ regexReplaceAll \".*skill_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}\" }}{{ else }}{{ .tool_name }}{{ end }}` | keep tool, tool_result_size_bytes | unwrap tool_result_size_bytes [$__range]))",
+          "queryType": "instant"
+        },
+        {
+          "refId": "E",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (tool) (sum_over_time({service_name=\"claude-code\"} | event_name=\"tool_result\" | session_id=~\"${session}.*\" | label_format tool=`{{ if eq .tool_name \"mcp_tool\" }}mcp:{{ regexReplaceAll \".*mcp_server_name\\\":\\\"([^\\\"]+)\\\".*mcp_tool_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}/${2}\" }}{{ else if eq .tool_name \"Skill\" }}Skill:{{ regexReplaceAll \".*skill_name\\\":\\\"([^\\\"]+)\\\".*\" .tool_parameters \"${1}\" }}{{ else }}{{ .tool_name }}{{ end }}` | keep tool, duration_ms | unwrap duration_ms [$__range]))",
+          "queryType": "instant"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "Time"
+              ]
+            }
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": {
+              "tool": 0,
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "Value #D": 4,
+              "Value #E": 5
+            },
+            "renameByName": {
+              "Value #A": "호출",
+              "Value #B": "실패",
+              "Value #C": "입력 bytes",
+              "Value #D": "결과 bytes",
+              "Value #E": "소요 (ms)"
+            }
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "sishort",
+          "custom": {
+            "align": "auto",
+            "filterable": true
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "비용 (USD)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "currencyUSD"
+              },
+              {
+                "id": "decimals",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(시작|마지막 활동)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dateTimeAsIso"
+              },
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(tool)$"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "string"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(session_id|prompt_id)$"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "\\(ms\\)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "결과 bytes",
+            "desc": true
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "description": "tool_result 이벤트 기준. 결과 bytes 가 클수록 이후 요청의 입력 토큰을 많이 차지한다. 토큰 수 자체는 도구 단위로 제공되지 않는다."
+    },
+    {
+      "id": 19,
+      "type": "logs",
+      "title": "API 요청 원본 이벤트",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 68,
+        "w": 24,
+        "h": 10
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{service_name=\"claude-code\"} | event_name=\"api_request\" | session_id=~\"${session}.*\" | line_format \"{{.model}}  in={{.input_tokens}} out={{.output_tokens}} cache_read={{.cache_read_tokens}} cache_write={{.cache_creation_tokens}} cost=${{.cost_usd}} {{.duration_ms}}ms  agent={{.agent_name}} skill={{.skill_name}} mcp={{.mcp_server_name}}/{{.mcp_tool_name}}  session={{.session_id}} prompt={{.prompt_id}}\"",
+          "queryType": "range"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "wrapLogMessage": false
+      }
+    }
+  ]
+}
