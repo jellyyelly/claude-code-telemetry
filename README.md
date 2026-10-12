@@ -17,7 +17,7 @@ Claude Code 가 내보내는 OpenTelemetry 이벤트를 로컬 Loki 가 받아 �
 ## 설치
 
 ```bash
-git clone <이 저장소> ~/claude-code-telemetry
+git clone https://github.com/jellyyelly/claude-code-telemetry.git ~/claude-code-telemetry
 cd ~/claude-code-telemetry
 ./install.sh
 ```
