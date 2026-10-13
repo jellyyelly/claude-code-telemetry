@@ -6,7 +6,8 @@ Claude Code 가 내보내는 OpenTelemetry 이벤트를 로컬 Loki 가 받아 �
 
 ![Claude Code 토큰 사용량 대시보드](docs/dashboard.png)
 
-위에서부터 기간 합계, 토큰·비용 추이, 세션별·턴별 사용량, 스킬·MCP·서브에이전트·도구별 사용량, 주간 대비 증감, API 요청 원본 이벤트 순이다.
+위에서부터 기간 합계, 토큰·비용 추이, 세션별·턴별 사용량, 스킬·MCP·서브에이전트·도구별 사용량, API 요청 원본 이벤트 순이다.
+주간 대비 증감은 7일 범위 쿼리가 무거워 별도 대시보드에 있다. 오른쪽 위 "주간 대비 증감" 링크로 연다.
 
 ## 준비물
 
@@ -82,12 +83,12 @@ git rm -r --cached -q . && git reset --hard   # 커밋하지 않은 변경은 �
 - **초기 컨텍스트**: 세션 첫 요청의 프롬프트 크기. 시스템 프롬프트·도구 정의·메모리 파일·스킬 목록의 합에 가깝다.
 - **턴 번호**: 선택한 시간 범위 안에서 그 세션의 몇 번째 턴인지. 범위가 세션 시작보다 늦으면 1번부터 다시 매겨진다.
 - **스킬·MCP 귀속 사용량**: 서로 겹칠 수 있으니 더하지 않는다.
-- **주간 대비 증감**: 시간 범위의 끝 시각 기준으로 최근 7일과 직전 7일을 비교한다. 세션 필터와 무관하다.
+- **주간 대비 증감**: 별도 대시보드(`/d/claude-code-weekly`). 시간 범위의 끝 시각 기준으로 최근 7일과 직전 7일을 비교한다. 전체 세션 대상이며 자동 새로고침은 하지 않는다.
 - **세션 이름**: `/rename` 으로 붙인 제목이 있으면 그것, 없으면 자동 생성 제목. 첫 턴이 끝나야 채워진다.
 
 ## 대시보드 고치기
 
-Grafana 화면에서 고친 내용은 `grafana/dashboards/claude-code-tokens.json` 이 다시 생성될 때 덮어써진다.
+Grafana 화면에서 고친 내용은 `grafana/dashboards/*.json` 이 다시 생성될 때 덮어써진다.
 유지할 변경은 `generate-dashboard.py` 를 고치고 다시 생성한 뒤 커밋한다.
 
 ```bash
@@ -100,7 +101,8 @@ python3 generate-dashboard.py   # JSON 재생성. Grafana 가 10초 안에 읽�
 |---|---|
 | `docker-compose.yml`, `loki-config.yaml` | Loki·Grafana 컨테이너 |
 | `grafana/provisioning/` | 데이터소스와 대시보드 자동 등록 |
-| `grafana/dashboards/claude-code-tokens.json` | 대시보드 (생성물) |
+| `grafana/dashboards/claude-code-tokens.json` | 메인 대시보드 (생성물) |
+| `grafana/dashboards/claude-code-weekly.json` | 주간 대비 증감 대시보드 (생성물) |
 | `generate-dashboard.py` | 대시보드 생성기 |
 | `session-name-hook.sh` | Stop 훅. 세션 이름·프로젝트를 Loki 에 기록 |
 | `install.sh`, `uninstall.sh`, `lib.sh` | 설치·제거 |

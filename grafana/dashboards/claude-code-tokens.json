@@ -1,17 +1,26 @@
 {
-  "uid": "claude-code-tokens",
-  "title": "Claude Code 토큰 사용량",
   "tags": [
     "claude-code"
   ],
   "timezone": "Asia/Seoul",
   "schemaVersion": 39,
   "editable": true,
+  "uid": "claude-code-tokens",
+  "title": "Claude Code 토큰 사용량",
   "refresh": "10s",
   "time": {
     "from": "now-24h",
     "to": "now"
   },
+  "links": [
+    {
+      "type": "link",
+      "title": "주간 대비 증감",
+      "url": "/d/claude-code-weekly",
+      "icon": "dashboard",
+      "keepTime": true
+    }
+  ],
   "templating": {
     "list": [
       {
@@ -541,541 +550,6 @@
       }
     },
     {
-      "id": 11,
-      "type": "table",
-      "title": "주간 대비 증감: 비용 (최근 7일 vs 직전 7일)",
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "x": 0,
-        "y": 58,
-        "w": 9,
-        "h": 10
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])), \"metric\", \"1. 비용\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d])))), \"metric\", \"2. 턴당 평균 비용\", \"\", \"\")",
-          "queryType": "instant"
-        },
-        {
-          "refId": "B",
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) or vector(0)), \"metric\", \"1. 비용\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d)))) or vector(0)), \"metric\", \"2. 턴당 평균 비용\", \"\", \"\")",
-          "queryType": "instant"
-        },
-        {
-          "refId": "C",
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) or vector(0))), \"metric\", \"1. 비용\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d])))) - ((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d)))) or vector(0))), \"metric\", \"2. 턴당 평균 비용\", \"\", \"\")",
-          "queryType": "instant"
-        },
-        {
-          "refId": "D",
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d))), \"metric\", \"1. 비용\", \"\", \"\") or label_replace((((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d])) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d])))) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d))))) / (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cost_usd | unwrap cost_usd [7d] offset 7d)) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d))))), \"metric\", \"2. 턴당 평균 비용\", \"\", \"\")",
-          "queryType": "instant"
-        }
-      ],
-      "transformations": [
-        {
-          "id": "labelsToFields",
-          "options": {
-            "mode": "columns"
-          }
-        },
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "exclude": {
-              "names": [
-                "Time"
-              ]
-            }
-          }
-        },
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {
-              "metric": 0,
-              "Value #A": 1,
-              "Value #B": 2,
-              "Value #C": 3,
-              "Value #D": 4
-            },
-            "renameByName": {
-              "Value #A": "최근 7일",
-              "Value #B": "직전 7일",
-              "Value #C": "증감",
-              "Value #D": "증감률"
-            }
-          }
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "sishort",
-          "custom": {
-            "align": "auto",
-            "filterable": true
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "비용 (USD)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "currencyUSD"
-              },
-              {
-                "id": "decimals",
-                "value": 4
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "^(시작|마지막 활동)$"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "dateTimeAsIso"
-              },
-              {
-                "id": "custom.width",
-                "value": 170
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "^(metric)$"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "string"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "^(session_id|prompt_id)$"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 300
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "bytes"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "bytes"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "\\(ms\\)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "ms"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "metric"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "항목"
-              },
-              {
-                "id": "custom.width",
-                "value": 230
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "^(최근 7일|직전 7일|증감)$"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "currencyUSD"
-              },
-              {
-                "id": "decimals",
-                "value": 4
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "증감률"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percentunit"
-              },
-              {
-                "id": "decimals",
-                "value": 1
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "text",
-                      "value": -0.05
-                    },
-                    {
-                      "color": "red",
-                      "value": 0.05
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "displayName": "metric",
-            "desc": false
-          }
-        ],
-        "footer": {
-          "show": false
-        }
-      },
-      "description": "대시보드 시간 범위의 끝 시각을 기준으로 최근 7일과 그 직전 7일을 비교한다(시간 범위 길이·세션 필터와 무관, 전체 세션 대상). 직전 7일에 데이터가 없으면 증감률 열은 나오지 않는다."
-    },
-    {
-      "id": 12,
-      "type": "table",
-      "title": "주간 대비 증감: 사용량 (최근 7일 vs 직전 7일)",
-      "datasource": {
-        "type": "loki",
-        "uid": "loki"
-      },
-      "gridPos": {
-        "x": 9,
-        "y": 58,
-        "w": 15,
-        "h": 10
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "label_replace(count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d]))), \"metric\", \"1. 세션\", \"\", \"\") or label_replace(count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d]))), \"metric\", \"2. 턴\", \"\", \"\") or label_replace(sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d])), \"metric\", \"3. API 요청\", \"\", \"\") or label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d])), \"metric\", \"4. 입력 토큰\", \"\", \"\") or label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d])), \"metric\", \"5. 출력 토큰\", \"\", \"\") or label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d])), \"metric\", \"6. 캐시 읽기 토큰\", \"\", \"\") or label_replace(sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d])), \"metric\", \"7. 캐시 쓰기 토큰\", \"\", \"\")",
-          "queryType": "instant"
-        },
-        {
-          "refId": "B",
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "label_replace((count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d] offset 7d))) or vector(0)), \"metric\", \"1. 세션\", \"\", \"\") or label_replace((count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d))) or vector(0)), \"metric\", \"2. 턴\", \"\", \"\") or label_replace((sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d] offset 7d)) or vector(0)), \"metric\", \"3. API 요청\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d] offset 7d)) or vector(0)), \"metric\", \"4. 입력 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d] offset 7d)) or vector(0)), \"metric\", \"5. 출력 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d] offset 7d)) or vector(0)), \"metric\", \"6. 캐시 읽기 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d] offset 7d)) or vector(0)), \"metric\", \"7. 캐시 쓰기 토큰\", \"\", \"\")",
-          "queryType": "instant"
-        },
-        {
-          "refId": "C",
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "label_replace((count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d]))) - (count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d] offset 7d))) or vector(0))), \"metric\", \"1. 세션\", \"\", \"\") or label_replace((count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d]))) - (count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d))) or vector(0))), \"metric\", \"2. 턴\", \"\", \"\") or label_replace((sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d])) - (sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d] offset 7d)) or vector(0))), \"metric\", \"3. API 요청\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d] offset 7d)) or vector(0))), \"metric\", \"4. 입력 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d] offset 7d)) or vector(0))), \"metric\", \"5. 출력 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d] offset 7d)) or vector(0))), \"metric\", \"6. 캐시 읽기 토큰\", \"\", \"\") or label_replace((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d])) - (sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d] offset 7d)) or vector(0))), \"metric\", \"7. 캐시 쓰기 토큰\", \"\", \"\")",
-          "queryType": "instant"
-        },
-        {
-          "refId": "D",
-          "datasource": {
-            "type": "loki",
-            "uid": "loki"
-          },
-          "expr": "label_replace(((count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d]))) - count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d] offset 7d)))) / count(sum by (session_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep session_id [7d] offset 7d)))), \"metric\", \"1. 세션\", \"\", \"\") or label_replace(((count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d]))) - count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d)))) / count(sum by (prompt_id) (count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep prompt_id [7d] offset 7d)))), \"metric\", \"2. 턴\", \"\", \"\") or label_replace(((sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d])) - sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d] offset 7d))) / sum(count_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep event_name [7d] offset 7d))), \"metric\", \"3. API 요청\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep input_tokens | unwrap input_tokens [7d] offset 7d))), \"metric\", \"4. 입력 토큰\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep output_tokens | unwrap output_tokens [7d] offset 7d))), \"metric\", \"5. 출력 토큰\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_read_tokens | unwrap cache_read_tokens [7d] offset 7d))), \"metric\", \"6. 캐시 읽기 토큰\", \"\", \"\") or label_replace(((sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d])) - sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d] offset 7d))) / sum(sum_over_time({service_name=\"claude-code\"} | event_name=\"api_request\" | keep cache_creation_tokens | unwrap cache_creation_tokens [7d] offset 7d))), \"metric\", \"7. 캐시 쓰기 토큰\", \"\", \"\")",
-          "queryType": "instant"
-        }
-      ],
-      "transformations": [
-        {
-          "id": "labelsToFields",
-          "options": {
-            "mode": "columns"
-          }
-        },
-        {
-          "id": "filterFieldsByName",
-          "options": {
-            "exclude": {
-              "names": [
-                "Time"
-              ]
-            }
-          }
-        },
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "indexByName": {
-              "metric": 0,
-              "Value #A": 1,
-              "Value #B": 2,
-              "Value #C": 3,
-              "Value #D": 4
-            },
-            "renameByName": {
-              "Value #A": "최근 7일",
-              "Value #B": "직전 7일",
-              "Value #C": "증감",
-              "Value #D": "증감률"
-            }
-          }
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "sishort",
-          "custom": {
-            "align": "auto",
-            "filterable": true
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "비용 (USD)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "currencyUSD"
-              },
-              {
-                "id": "decimals",
-                "value": 4
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "^(시작|마지막 활동)$"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "dateTimeAsIso"
-              },
-              {
-                "id": "custom.width",
-                "value": 170
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "^(metric)$"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "string"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "^(session_id|prompt_id)$"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 300
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "bytes"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "bytes"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "\\(ms\\)"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "ms"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "metric"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "항목"
-              },
-              {
-                "id": "custom.width",
-                "value": 230
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "^(최근 7일|직전 7일|증감)$"
-            },
-            "properties": []
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "증감률"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "percentunit"
-              },
-              {
-                "id": "decimals",
-                "value": 1
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-text"
-                }
-              },
-              {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": null
-                    },
-                    {
-                      "color": "text",
-                      "value": -0.05
-                    },
-                    {
-                      "color": "red",
-                      "value": 0.05
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "displayName": "metric",
-            "desc": false
-          }
-        ],
-        "footer": {
-          "show": false
-        }
-      },
-      "description": "대시보드 시간 범위의 끝 시각을 기준으로 최근 7일과 그 직전 7일을 비교한다(시간 범위 길이·세션 필터와 무관, 전체 세션 대상). 직전 7일에 데이터가 없으면 증감률 열은 나오지 않는다."
-    },
-    {
       "id": 13,
       "type": "table",
       "title": "세션별 사용량",
@@ -1499,7 +973,10 @@
             "fields": [
               "session_id"
             ],
-            "keepFields": true
+            "keepFields": true,
+            "naming": {
+              "asLabels": false
+            }
           }
         },
         {
@@ -1511,6 +988,10 @@
               "asPercentile": false
             }
           }
+        },
+        {
+          "id": "merge",
+          "options": {}
         },
         {
           "id": "calculateField",
@@ -1530,10 +1011,6 @@
               }
             }
           }
-        },
-        {
-          "id": "merge",
-          "options": {}
         },
         {
           "id": "organize",
@@ -2600,7 +2077,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 68,
+        "y": 58,
         "w": 24,
         "h": 10
       },
