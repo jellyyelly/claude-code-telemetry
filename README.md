@@ -47,6 +47,16 @@ cd ~/claude-code-telemetry
 
 훅이 절대 경로로 등록되므로 옮긴 뒤 `./install.sh --settings-only` 를 실행한다.
 
+### Windows 에서 `bash\r` 오류가 날 때
+
+`/usr/bin/env: 'bash\r': No such file or directory` 는 Windows 의 Git 이 파일을 CRLF 로 내려받아서 생긴다.
+지금은 `.gitattributes` 가 LF 로 고정하므로 새로 clone 하면 생기지 않는다. 이미 받아 둔 저장소는 한 번만 다시 체크아웃한다.
+
+```bash
+git pull
+git rm -r --cached -q . && git reset --hard   # 커밋하지 않은 변경은 사라진다
+```
+
 ## 제거
 
 ```bash

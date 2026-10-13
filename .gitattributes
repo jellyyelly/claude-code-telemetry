@@ -1,0 +1,4 @@
+# 줄바꿈을 LF 로 고정한다. Windows 의 Git(core.autocrlf=true)이 CRLF 로 체크아웃하면
+# 셸 스크립트의 shebang 과 컨테이너에 마운트되는 설정 파일이 깨진다.
+* text=auto eol=lf
+*.png binary

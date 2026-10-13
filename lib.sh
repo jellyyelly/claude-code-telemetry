@@ -1,6 +1,7 @@
 # install.sh / uninstall.sh 공용. macOS 기본 bash(3.2)에서도 돌도록 쓴다.
 ROOT=$(cd "$(dirname "$0")" && pwd)
-[ -f "$ROOT/.env" ] && . "$ROOT/.env"
+# .env 는 Windows 편집기로 고치면 CRLF 가 되므로 CR 을 떼고 읽는다.
+[ -f "$ROOT/.env" ] && eval "$(tr -d '\r' < "$ROOT/.env")"
 GRAFANA_PORT=${GRAFANA_PORT:-23000}
 LOKI_PORT=${LOKI_PORT:-23100}
 SETTINGS=${CLAUDE_SETTINGS:-$HOME/.claude/settings.json}

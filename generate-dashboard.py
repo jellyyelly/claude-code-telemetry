@@ -205,7 +205,7 @@ dash = {
     "panels": panels,
 }
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "grafana/dashboards/claude-code-tokens.json")
-json.dump(dash, open(out, "w"), ensure_ascii=False, indent=2)
+json.dump(dash, open(out, "w", encoding="utf-8", newline="\n"), ensure_ascii=False, indent=2)
 if os.environ.get("PRINT_EXPRS"):
     for p in panels:
         for t in p["targets"]:
