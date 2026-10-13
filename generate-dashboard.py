@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""grafana/dashboards/claude-code-tokens.json 생성기. 실행: python3 generate-dashboard.py"""
+"""grafana/dashboards/ 의 claude-code-tokens.json(메인)·claude-code-weekly.json(주간 대비) 생성기. 실행: python3 generate-dashboard.py"""
 import json, os
 
 DS = {"type": "loki", "uid": "loki"}
@@ -109,9 +109,8 @@ panels.append(panel("timeseries", "비용 추이 (모델별)", (14, 4, 10, 8),
 
 ALL = SEL + ' | event_name="api_request"'
 def wk(expr_fn):
-    """expr_fn(범위) -> 라벨 없는 단일 값 LogQL. 이번 7일 / 직전 7일 / 증감 / 증감률 네 식을 돌려준다."""
-    cur, prev = expr_fn("[7d]"), expr_fn("[7d] offset 7d")
-    return cur, f"({prev} or vector(0))", f"({cur} - ({prev} or vector(0)))", f"(({cur} - {prev}) / {prev})"
+    """expr_fn(범위) -> 라벨 없는 단일 값 LogQL. 이번 7일 / 직전 7일 두 식을 돌려준다."""
+    return expr_fn("[7d]"), f"({expr_fn('[7d] offset 7d')} or vector(0))"
 def w_sum(f): return lambda r: f"sum(sum_over_time({ALL} | keep {f} | unwrap {f} {r}))"
 def w_cnt(by): return lambda r: (f"count(sum by ({by}) (count_over_time({ALL} | keep {by} {r})))" if by
                                 else f"sum(count_over_time({ALL} | keep event_name {r}))")
@@ -123,22 +122,32 @@ ROWS = [("1. 비용", w_sum("cost_usd")), ("2. 턴당 평균 비용", lambda r: 
 def wow(title, grid, rows, unit_props=()):
     col = lambda i: " or ".join(f'label_replace({wk(fn)[i]}, "metric", "{name}", "", "")' for name, fn in rows)
     return table(title, grid, ("metric",),
-                 [(col(0), "최근 7일"), (col(1), "직전 7일"), (col(2), "증감"), (col(3), "증감률")], sort="metric", sort_desc=False,
+                 [(col(0), "최근 7일"), (col(1), "직전 7일")], sort="metric", sort_desc=False,
                  description="대시보드 시간 범위의 끝 시각을 기준으로 최근 7일과 그 직전 7일을 비교한다(시간 범위 길이·세션 필터와 무관, 전체 세션 대상). "
-                             "직전 7일에 데이터가 없으면 증감률 열은 나오지 않는다.",
+                             "직전 7일에 데이터가 없으면 증감률은 – 로 나온다.",
+                 # 증감·증감률을 LogQL 로 구하면 7일 범위를 같은 식으로 여러 번 다시 훑으므로 Grafana 쪽에서 계산한다.
+                 pre=[
+                     {"id": "calculateField", "options": {"mode": "binary", "alias": "증감", "binary": {
+                         "left": {"matcher": {"id": "byName", "options": "Value #A"}}, "operator": "-", "right": {"matcher": {"id": "byName", "options": "Value #B"}}}}},
+                     {"id": "calculateField", "options": {"mode": "binary", "alias": "증감률", "binary": {
+                         "left": {"matcher": {"id": "byName", "options": "증감"}}, "operator": "/", "right": {"matcher": {"id": "byName", "options": "Value #B"}}}}},
+                 ],
                  extra_overrides=[
                      {"matcher": {"id": "byName", "options": "metric"}, "properties": [{"id": "displayName", "value": "항목"}, {"id": "custom.width", "value": 230}]},
                      {"matcher": {"id": "byRegexp", "options": "^(최근 7일|직전 7일|증감)$"}, "properties": list(unit_props)},
                      {"matcher": {"id": "byName", "options": "증감률"}, "properties": [
                          {"id": "unit", "value": "percentunit"}, {"id": "decimals", "value": 1},
+                         {"id": "mappings", "value": [  # 직전 7일이 0 이면 나눗셈 결과가 무한대·NaN
+                             {"type": "range", "options": {"from": 1e15, "result": {"text": "–", "color": "text", "index": 0}}},
+                             {"type": "special", "options": {"match": "null+nan", "result": {"text": "–", "color": "text", "index": 1}}}]},
                          {"id": "custom.cellOptions", "value": {"type": "color-text"}},
                          {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "green", "value": None}, {"color": "text", "value": -0.05}, {"color": "red", "value": 0.05}]}}]},
                  ])
-# 비용과 건수·토큰은 단위가 달라 표를 나눈다. UI 에서 옮긴 위치(도구별 표 아래)에 둔다.
-WOW = [wow("주간 대비 증감: 비용 (최근 7일 vs 직전 7일)", (0, 58, 9, 10), ROWS[:2],
+# 7일 범위를 훑는 쿼리가 메인 대시보드의 새로고침을 느리게 하므로 별도 대시보드(claude-code-weekly)에 둔다.
+# 비용과 건수·토큰은 단위가 달라 표를 나눈다.
+WOW = [wow("주간 대비 증감: 비용 (최근 7일 vs 직전 7일)", (0, 0, 9, 10), ROWS[:2],
            [{"id": "unit", "value": "currencyUSD"}, {"id": "decimals", "value": 4}]),
-       wow("주간 대비 증감: 사용량 (최근 7일 vs 직전 7일)", (9, 58, 15, 10), ROWS[2:])]
-panels += WOW
+       wow("주간 대비 증감: 사용량 (최근 7일 vs 직전 7일)", (9, 0, 15, 10), ROWS[2:])]
 
 S = ("session_id",)
 panels.append(table("세션별 사용량", (0, 12, 24, 9), S, [
@@ -156,11 +165,14 @@ panels.append(table("턴별 사용량 (prompt.id 기준)", (0, 21, 24, 11), T,
                     key_order=("session_id", "턴 번호", "prompt_id", "model"), hide_raw=("_idx",),
                     pre=[  # "Value #A" = 시작 시각(이름을 바꾸기 전)
                         {"id": "sortBy", "options": {"sort": [{"field": "Value #A", "desc": False}]}},
-                        {"id": "partitionByValues", "options": {"fields": ["session_id"], "keepFields": True}},
+                        # 기본값(asLabels)은 session_id 를 필드 라벨로 붙인다. 세션이 하나뿐이면 아래 merge 가 아무것도 하지 않아
+                        # 라벨이 열 이름에 남으므로("Value #A <session_id>") 라벨 대신 프레임 이름으로 구분한다.
+                        {"id": "partitionByValues", "options": {"fields": ["session_id"], "keepFields": True, "naming": {"asLabels": False}}},
                         {"id": "calculateField", "options": {"mode": "index", "alias": "_idx", "index": {"asPercentile": False}}},
+                        {"id": "merge", "options": {}},
+                        # 프레임 이름이 서로 다르면 "_idx" 를 이름으로 찾지 못하므로 합친 뒤에 계산한다.
                         {"id": "calculateField", "options": {"mode": "binary", "alias": "턴 번호", "binary": {
                             "left": {"matcher": {"id": "byName", "options": "_idx"}}, "operator": "+", "right": {"fixed": "1"}}}},
-                        {"id": "merge", "options": {}},
                     ],
                     extra_overrides=[{"matcher": {"id": "byName", "options": "턴 번호"}, "properties": [{"id": "unit", "value": "none"}, {"id": "custom.width", "value": 90}]}]))
 
@@ -192,20 +204,27 @@ panels.append(panel("logs", "API 요청 원본 이벤트", (0, 58, 24, 10),
                     [tgt("A", API + ' | line_format "{{.model}}  in={{.input_tokens}} out={{.output_tokens}} cache_read={{.cache_read_tokens}} cache_write={{.cache_creation_tokens}} cost=${{.cost_usd}} {{.duration_ms}}ms  agent={{.agent_name}} skill={{.skill_name}} mcp={{.mcp_server_name}}/{{.mcp_tool_name}}  session={{.session_id}} prompt={{.prompt_id}}"', False)],
                     options={"showTime": True, "sortOrder": "Descending", "enableLogDetails": True, "wrapLogMessage": False}))
 
-for p in panels:  # 주간 대비 패널(높이 10)을 끼워 넣은 만큼 그 아래 패널을 내린다.
-    if p not in WOW and p["gridPos"]["y"] >= 58:
-        p["gridPos"]["y"] += 10
+for i, p in enumerate(WOW): p["id"] = i + 1
 
+def link(title, uid):
+    return {"type": "link", "title": title, "url": f"/d/{uid}", "icon": "dashboard", "keepTime": True}
+BASE = {"tags": ["claude-code"], "timezone": "Asia/Seoul", "schemaVersion": 39, "editable": True}
 dash = {
-    "uid": "claude-code-tokens", "title": "Claude Code 토큰 사용량", "tags": ["claude-code"],
-    "timezone": "Asia/Seoul", "schemaVersion": 39, "editable": True, "refresh": "10s",
-    "time": {"from": "now-24h", "to": "now"},
+    **BASE, "uid": "claude-code-tokens", "title": "Claude Code 토큰 사용량", "refresh": "10s",
+    "time": {"from": "now-24h", "to": "now"}, "links": [link("주간 대비 증감", "claude-code-weekly")],
     "templating": {"list": [{"name": "session", "label": "세션 ID (비우면 전체)", "type": "textbox",
                              "query": "", "current": {"text": "", "value": ""}, "options": [{"selected": True, "text": "", "value": ""}]}]},
     "panels": panels,
 }
-out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "grafana/dashboards/claude-code-tokens.json")
-json.dump(dash, open(out, "w", encoding="utf-8", newline="\n"), ensure_ascii=False, indent=2)
+# 자동 새로고침 없음: 값이 7일 단위라 열 때(또는 수동 새로고침 때)만 계산하면 된다.
+weekly = {
+    **BASE, "uid": "claude-code-weekly", "title": "Claude Code 주간 대비 증감", "refresh": "",
+    "time": {"from": "now-24h", "to": "now"}, "links": [link("토큰 사용량", "claude-code-tokens")],
+    "panels": WOW,
+}
+for name, d in (("claude-code-tokens", dash), ("claude-code-weekly", weekly)):
+    out = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"grafana/dashboards/{name}.json")
+    json.dump(d, open(out, "w", encoding="utf-8", newline="\n"), ensure_ascii=False, indent=2)
 if os.environ.get("PRINT_EXPRS"):
     for p in panels:
         for t in p["targets"]:
