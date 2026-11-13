@@ -48,6 +48,18 @@ cd ~/claude-code-telemetry
 
 훅이 절대 경로로 등록되므로 옮긴 뒤 `./install.sh --settings-only` 를 실행한다.
 
+### Windows 를 다시 켠 뒤 대시보드가 사라졌을 때
+
+Docker Desktop 이 WSL 의 저장소 폴더가 연결되기 전에 Grafana 를 띄우면, 대시보드 폴더가 빈 폴더로 마운트된다.
+이때 대시보드 목록이 비고 홈 화면이 오류를 낸다. 수집 데이터는 Loki 에 그대로 남아 있다.
+
+Grafana 는 시작할 때 대시보드 파일이 보이는지 확인하고, 안 보이면 실패로 끝나 Docker 가 다시 띄운다.
+그래도 비어 있으면 Grafana 컨테이너를 다시 만든다.
+
+```bash
+docker compose up -d --force-recreate grafana
+```
+
 ### Windows 에서 `bash\r` 오류가 날 때
 
 `/usr/bin/env: 'bash\r': No such file or directory` 는 Windows 의 Git 이 파일을 CRLF 로 내려받아서 생긴다.
